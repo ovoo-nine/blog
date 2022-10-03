@@ -1,5 +1,8 @@
 ---
 home: true
+actions:
+  - text: 前端知识
+    link: /fe-base/es6/
 features:
   - title: 前端知识
     details: html css js vue react ts node  等
