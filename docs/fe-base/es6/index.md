@@ -231,3 +231,108 @@ jQuery.ajax = function (
 ```js
 const { SourceMapConsumer, SourceNode } = require('source-map')
 ```
+
+## Promise
+
+`Promise` 是异步编程的一种解决方案。简单说就是一个容器，里面保存着某个未来才会结束的事件（通常是一个异步操作）的结果。
+
+`Promise` 对象有以下两个特点：
+
+1. 对象的状态不受外界影响，`Promise` 对象有三种状态：`pending` （进行中）， `fulfilled` （已成功）和 `rejected` （已失败）。只有异步操作的结果，可以决定当前状态，其他任何操作都无法改变这个状态。
+2. 一旦状态改变，就不会再变。`Promise` 对象的状态改变，只有两种可能：从 `pending` 变为 `fulfilled` 和从 `pending` 变为 `rejected`。只要状态发生改变，会一直保持这个结果，这时被称为 resolved （已定型）。
+
+### Promise 基本用法
+
+`ES6` 规定， `Promise` 对象是一个构造函数，用来生成 `Promise` 实例。`Promise` 构造函数接受一个函数作为参数，该函数的两个参数分别是 `resolve` 和 `reject` 。
+
+```js
+const promise = new Promise(function(resolve, reject) {
+  // ... some code
+
+  if (/* 异步操作成功 */){
+    // 将 Promise 对象的状态从“未完成”变为“成功”
+    resolve(value);
+  } else {
+    // 将 Promise 对象的状态从“未完成”变为“失败”
+    reject(error);
+  }
+});
+```
+
+### Promise.prototype.then()
+
+`Promise.then` 可以接受两个回调函数作为参数用以指定 `resolve` 和 `rejected` 状态的回调函数,并且返回的是一个新的 `Promise` 实例。
+第一个回调函数是状态变为 `resolve` 时使用，第二个是状态变为 `rejected` 时使用，两个函数参数都可选，不是必需的。
+
+```js
+promise
+  .then(
+    function (value) {
+      // success
+    },
+    function (error) {
+      // failure
+    }
+  )
+  .then((value) => {
+    // success
+  })
+```
+
+### Promise.prototype.catch() 和 Promise.prototype.finally()
+
+- `Promise.prototype.catch()` 方法是 `.then(null, rejection)` 或.`then(undefined, rejection)` 的别名，用于指定发生错误时的回调函数。
+
+- `Promise.prototype.finally()` 方法用于指定不管 `Promise` 对象最后状态如何，都会执行的操作。
+
+```js
+promise
+  .then(function (value) {
+    // success
+  })
+  .catch(function (error) {
+    // failure
+  })
+  .finally(() => {
+    // finally
+  })
+```
+
+### Promise.resolve()
+
+`Promise.resolve()` 可以将现有对象转化为 `Promise` 实例。
+
+`Promise.resolve()` 的参数有四种情况：
+
+- 参数为 `Promise` 实例时，将返回这个 `Promise` 实例。
+- 当参数是一个 `thenable` 对象时，P 这个对象将被转化成 `Promise` 对象，并且立即执行对象的 `then` 方法。
+- 参数为原始值，或者没有 `then` 方法的对象时，返回一个 `resolved` 状态的 `Promise`，并且参数将传给回调函数。
+- 没有参数时，将直接返回一个 `resolved` 状态的 `Promise`。
+
+### Promise.reject()
+
+`Promise.reject()` 会返回一个 `rejected` 状态的 `Promise` 对象，并且参数将会给回调函数立即执行。
+
+### Promise.all()
+
+`Promise.all()` 方法用于将多个 `Promise` 实例，包装成一个新的 `Promise` 实例。
+
+```js
+const p = Promise.all([p1, p2, p3])
+```
+
+`Promise.all()` 可以接受一个数组作为参数，数组的每个成员都是一个 `Promise` 对象，并返回一个新的 `Promise` 对象。也可以接受具有 `Iterator` 接口，且返回的每个成员都是 `Promise` 实例的数据结构作为参数。
+
+`Promise.all()` 返回的状态由传入的参数的返回状态决定，只有所有实例都返回为 `fulfilled` ，返回的状态才会是 `fulfilled` ，并且将所有返回值组成数组传给回调函数，否则为 `rejected` ，传递给回调函数的为第一个被 `rejected` 的实例的返回值。
+
+### Promise.race()
+
+`Promise.race()` 方法的参数与 `Promise.all()` 方法一样, 不同的是，只要参数之中有一个实例率先改变状态，返回的状态就跟着改变,并且将实例的返回值传给回调函数。
+
+### Promise.allSettled()
+
+`Promise.allSettled()` 方法接受一个数组作为参数,只有等到参数数组的所有 `Promise` 对象都发生状态变更（不管是 `fulfilled` 还是 `rejected` ），返回的 `Promise` 对象才会发生状态变更，并且只会变成 `fulfilled`
+
+### Promise.any()
+
+`Promise.any()` 只要参数实例有一个变成 `fulfilled` 状态，包装实例就会变成 `fulfilled` 状态；如果所有参数实例都变成 `rejected` 状态，包装实例就会变成 `rejected` 状态。
