@@ -19,7 +19,7 @@
 - `macro task`宏任务：`MessageChannel`、`postMessage`、`setImmediate`和`setTimeout`。
 - `micro task`微任务：`Promise.then`和`MutationObsever`。
 
-![Event Loop](../../images/interview/6.png)
+![Event Loop](./images/event-loop.png)
 
 ### MutationObserver
 
